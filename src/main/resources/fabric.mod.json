@@ -10,20 +10,20 @@
   ],
   "contact": {
     "homepage": "",
-    "sources": ""
+    "sources": "https://github.com/Miki-Tellurium/PotionsRe-Glint"
   },
 
-  "license": "CC0-1.0",
+  "license": "MIT License",
   "icon": "assets/modid/icon.png",
 
   "environment": "*",
   "entrypoints": {
     "main": [
-      "net.mikitellurium.example.ExampleMod"
+      "com.mikitellurium.potionsreglint.PotionsReGlint"
     ]
   },
   "mixins": [
-    "modid.mixins.json"
+    "potions_re_glint.mixins.json"
   ],
 
   "depends": {
