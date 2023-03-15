@@ -1,8 +1,19 @@
-plugins {
-    id 'eclipse'
-    id 'maven-publish'
-    id 'net.minecraftforge.gradle' version '5.1.+'
+buildscript {
+    repositories {
+        maven { url = 'https://maven.minecraftforge.net' }
+        maven {
+            url = 'https://repo.spongepowered.org/repository/maven-public/'
+            content { includeGroup "org.spongepowered" }
+        }
+        mavenCentral()
+    }
+    dependencies {
+        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '5.1.+', changing: true
+        classpath 'org.spongepowered:mixingradle:0.7-SNAPSHOT'
+    }
 }
+apply plugin: 'net.minecraftforge.gradle'
+apply plugin: 'org.spongepowered.mixin'
 
 version = '1.0.0-1.19.4-forge'
 group = 'com.mikitellurium.potionsreglint' 
@@ -96,7 +107,17 @@ dependencies {
     
     minecraft 'net.minecraftforge:forge:1.19.4-45.0.1'
 
-    
+    annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
+
+}
+
+mixin {
+    // MixinGradle Settings
+    add sourceSets.main, 'mixins.potionsreglint.refmap.json'
+    config 'mixins.potionsreglint.json'
+
+    debug.verbose = true
+    debug.export = true
 }
 
 jar {
@@ -116,19 +137,6 @@ jar {
 
 jar.finalizedBy('reobfJar')
 
-
-publishing {
-    publications {
-        mavenJava(MavenPublication) {
-            artifact jar
-        }
-    }
-    repositories {
-        maven {
-            url "file://${project.projectDir}/mcmodsrepo"
-        }
-    }
-}
 
 tasks.withType(JavaCompile).configureEach {
     options.encoding = 'UTF-8' 
