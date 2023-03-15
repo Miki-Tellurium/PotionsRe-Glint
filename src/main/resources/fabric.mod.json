@@ -6,15 +6,15 @@
   "name": "Potions Re-Glint",
   "description": "Adding back enchantment glint to potions",
   "authors": [
-    "Me!"
+    "Miki Tellurium"
   ],
   "contact": {
-    "homepage": "",
-    "sources": "https://github.com/Miki-Tellurium/PotionsRe-Glint"
+    "sources": "https://github.com/Miki-Tellurium/PotionsRe-Glint",
+    "issues": "https://github.com/Miki-Tellurium/PotionsRe-Glint/issues"
   },
 
   "license": "MIT License",
-  "icon": "assets/modid/icon.png",
+  "icon": "assets/modid/potionreglintlogo.png",
 
   "environment": "*",
   "entrypoints": {

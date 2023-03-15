@@ -4,6 +4,7 @@
   "package": "com.mikitellurium.potionsreglint.mixin",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
+    "PotionItemMixin"
   ],
   "client": [
   ],
