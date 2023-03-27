@@ -15,7 +15,7 @@ buildscript {
 apply plugin: 'net.minecraftforge.gradle'
 apply plugin: 'org.spongepowered.mixin'
 
-version = '1.0.0-1.19.4-forge'
+version = '1.0.1-1.19.4-forge'
 group = 'com.mikitellurium.potionsreglint' 
 archivesBaseName = 'potionsreglint'
 
@@ -105,7 +105,7 @@ repositories {
 
 dependencies {
     
-    minecraft 'net.minecraftforge:forge:1.19.4-45.0.1'
+    minecraft 'net.minecraftforge:forge:1.19.4-45.0.25'
 
     annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
 
@@ -125,7 +125,7 @@ jar {
         attributes([
                 "Specification-Title"     : "Potions Re-Glint",
                 "Specification-Vendor"    : "Miki Tellurium",
-                "Specification-Version"   : "1.0.0-1.19.4-forge",
+                "Specification-Version"   : "1.0.1-1.19.4-forge",
                 "Implementation-Title"    : project.name,
                 "Implementation-Version"  : project.jar.archiveVersion,
                 "Implementation-Vendor"   : "Miki Tellurium",

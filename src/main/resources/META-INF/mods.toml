@@ -4,7 +4,7 @@ license="All rights reserved"
 #issueTrackerURL="https://change.me.to.your.issue.tracker.example.invalid/" #optional
 [[mods]] #mandatory
 modId="potionsreglint" #mandatory
-version="1.0.0-1.19.4" #mandatory
+version="1.0.1-1.19.4" #mandatory
  # A display name for the mod
 displayName="Potions Re-Glint" #mandatory
 #updateJSONURL="https://change.me.example.invalid/updates.json" #optional
@@ -23,7 +23,7 @@ description='''Adds back the enchantment glint to potions'''
 [[dependencies.potionsreglint]] #optional
     modId="forge" #mandatory
     mandatory=true #mandatory
-    versionRange="[45,)" #mandatory
+    versionRange="[45.0.25,)" #mandatory
     ordering="NONE"
     side="BOTH"
 [[dependencies.potionsreglint]]
