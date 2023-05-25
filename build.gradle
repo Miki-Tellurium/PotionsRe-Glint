@@ -15,7 +15,7 @@ buildscript {
 apply plugin: 'net.minecraftforge.gradle'
 apply plugin: 'org.spongepowered.mixin'
 
-version = '1.0.1-1.19.4-forge'
+version = '1.0.2-1.19.4-forge'
 group = 'com.mikitellurium.potionsreglint' 
 archivesBaseName = 'potionsreglint'
 
@@ -30,14 +30,11 @@ minecraft {
         client {
             workingDirectory project.file('run')
 
-           
             property 'forge.logging.markers', 'REGISTRIES'
-
-            
             property 'forge.logging.console.level', 'debug'
-
-            
             property 'forge.enabledGameTestNamespaces', 'potionsreglint'
+            property 'mixin.env.remapRefMap', 'true'
+            property 'mixin.env.refMapRemappingFile', "${projectDir}/build/createSrgToMcp/output.srg"
 
             mods {
                 potionsreglint {
@@ -50,10 +47,10 @@ minecraft {
             workingDirectory project.file('run')
 
             property 'forge.logging.markers', 'REGISTRIES'
-
             property 'forge.logging.console.level', 'debug'
-
             property 'forge.enabledGameTestNamespaces', 'potionsreglint'
+            property 'mixin.env.remapRefMap', 'true'
+            property 'mixin.env.refMapRemappingFile', "${projectDir}/build/createSrgToMcp/output.srg"
 
             mods {
                 potionsreglint {
@@ -66,10 +63,10 @@ minecraft {
             workingDirectory project.file('run')
 
             property 'forge.logging.markers', 'REGISTRIES'
-
             property 'forge.logging.console.level', 'debug'
-
             property 'forge.enabledGameTestNamespaces', 'potionsreglint'
+            property 'mixin.env.remapRefMap', 'true'
+            property 'mixin.env.refMapRemappingFile', "${projectDir}/build/createSrgToMcp/output.srg"
 
             mods {
                 potionsreglint {
@@ -82,8 +79,9 @@ minecraft {
             workingDirectory project.file('run')
 
             property 'forge.logging.markers', 'REGISTRIES'
-
             property 'forge.logging.console.level', 'debug'
+            property 'mixin.env.remapRefMap', 'true'
+            property 'mixin.env.refMapRemappingFile', "${projectDir}/build/createSrgToMcp/output.srg"
 
             args '--mod', 'potionsreglint', '--all', '--output', file('src/generated/resources/'), '--existing', file('src/main/resources/')
 
@@ -125,7 +123,7 @@ jar {
         attributes([
                 "Specification-Title"     : "Potions Re-Glint",
                 "Specification-Vendor"    : "Miki Tellurium",
-                "Specification-Version"   : "1.0.1-1.19.4-forge",
+                "Specification-Version"   : "1.0.2-1.19.4-forge",
                 "Implementation-Title"    : project.name,
                 "Implementation-Version"  : project.jar.archiveVersion,
                 "Implementation-Vendor"   : "Miki Tellurium",
