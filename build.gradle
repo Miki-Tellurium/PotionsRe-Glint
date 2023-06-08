@@ -1,43 +1,37 @@
 buildscript {
-    repositories {
-        maven { url = 'https://maven.minecraftforge.net' }
-        maven {
-            url = 'https://repo.spongepowered.org/repository/maven-public/'
-            content { includeGroup "org.spongepowered" }
-        }
-        mavenCentral()
-    }
     dependencies {
-        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '5.1.+', changing: true
-        classpath 'org.spongepowered:mixingradle:0.7-SNAPSHOT'
+        classpath 'org.spongepowered:mixingradle:0.7.+'
     }
 }
-apply plugin: 'net.minecraftforge.gradle'
+
+plugins {
+    id 'java'
+    id 'eclipse'
+    id 'maven-publish'
+    id 'net.minecraftforge.gradle' version '5.1.+'
+}
+apply plugin: 'java'
 apply plugin: 'org.spongepowered.mixin'
 
-version = '1.0.2-1.19.4-forge'
-group = 'com.mikitellurium.potionsreglint' 
-archivesBaseName = 'potionsreglint'
+archivesBaseName = project.mod_id
 
-java.toolchain.languageVersion = JavaLanguageVersion.of(17)
+mixin {
+    add sourceSets.main, "potionsreglint.refmap.json"
+    config "mixins.potionsreglint.json"
+}
 
-println "Java: ${System.getProperty 'java.version'}, JVM: ${System.getProperty 'java.vm.version'} (${System.getProperty 'java.vendor'}), Arch: ${System.getProperty 'os.arch'}"
 minecraft {
-    
-    mappings channel: 'official', version: '1.19.4'
-    
+    mappings channel: 'official', version: mc_version
+
     runs {
         client {
             workingDirectory project.file('run')
-
-            property 'forge.logging.markers', 'REGISTRIES'
-            property 'forge.logging.console.level', 'debug'
-            property 'forge.enabledGameTestNamespaces', 'potionsreglint'
+            ideaModule "${rootProject.name}.${project.name}.main"
+            taskName 'runClient'
             property 'mixin.env.remapRefMap', 'true'
             property 'mixin.env.refMapRemappingFile', "${projectDir}/build/createSrgToMcp/output.srg"
-
             mods {
-                potionsreglint {
+                modClientRun {
                     source sourceSets.main
                 }
             }
@@ -45,31 +39,12 @@ minecraft {
 
         server {
             workingDirectory project.file('run')
-
-            property 'forge.logging.markers', 'REGISTRIES'
-            property 'forge.logging.console.level', 'debug'
-            property 'forge.enabledGameTestNamespaces', 'potionsreglint'
+            ideaModule "${rootProject.name}.${project.name}.main"
+            taskName 'runServer'
             property 'mixin.env.remapRefMap', 'true'
             property 'mixin.env.refMapRemappingFile', "${projectDir}/build/createSrgToMcp/output.srg"
-
             mods {
-                potionsreglint {
-                    source sourceSets.main
-                }
-            }
-        }
-        
-        gameTestServer {
-            workingDirectory project.file('run')
-
-            property 'forge.logging.markers', 'REGISTRIES'
-            property 'forge.logging.console.level', 'debug'
-            property 'forge.enabledGameTestNamespaces', 'potionsreglint'
-            property 'mixin.env.remapRefMap', 'true'
-            property 'mixin.env.refMapRemappingFile', "${projectDir}/build/createSrgToMcp/output.srg"
-
-            mods {
-                potionsreglint {
+                modServerRun {
                     source sourceSets.main
                 }
             }
@@ -77,16 +52,13 @@ minecraft {
 
         data {
             workingDirectory project.file('run')
-
-            property 'forge.logging.markers', 'REGISTRIES'
-            property 'forge.logging.console.level', 'debug'
+            ideaModule "${rootProject.name}.${project.name}.main"
+            args '--mod', mod_id, '--all', '--output', file('src/generated/resources/'), '--existing', file('src/main/resources/')
+            taskName 'runData'
             property 'mixin.env.remapRefMap', 'true'
             property 'mixin.env.refMapRemappingFile', "${projectDir}/build/createSrgToMcp/output.srg"
-
-            args '--mod', 'potionsreglint', '--all', '--output', file('src/generated/resources/'), '--existing', file('src/main/resources/')
-
             mods {
-                potionsreglint {
+                modDataRun {
                     source sourceSets.main
                 }
             }
@@ -94,48 +66,54 @@ minecraft {
     }
 }
 
-
-sourceSets.main.resources { srcDir 'src/generated/resources' }
+sourceSets.main.resources.srcDir 'src/generated/resources'
 
 repositories {
-    
-}
 
-dependencies {
-    
-    minecraft 'net.minecraftforge:forge:1.19.4-45.0.25'
+    mavenCentral()
 
-    annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
-
-}
-
-mixin {
-    // MixinGradle Settings
-    add sourceSets.main, 'mixins.potionsreglint.refmap.json'
-    config 'mixins.potionsreglint.json'
-
-    debug.verbose = true
-    debug.export = true
-}
-
-jar {
-    manifest {
-        attributes([
-                "Specification-Title"     : "Potions Re-Glint",
-                "Specification-Vendor"    : "Miki Tellurium",
-                "Specification-Version"   : "1.0.2-1.19.4-forge",
-                "Implementation-Title"    : project.name,
-                "Implementation-Version"  : project.jar.archiveVersion,
-                "Implementation-Vendor"   : "Miki Tellurium",
-                "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
-        ])
+    maven {
+        name = 'Sponge / Mixin'
+        url = 'https://repo.spongepowered.org/repository/maven-public/'
     }
-}
 
+    dependencies {
+        minecraft "net.minecraftforge:forge:${mc_version}-${forge_version}"
+        annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
+    }
 
-jar.finalizedBy('reobfJar')
+    jar {
+        manifest {
+            attributes([
+                    'Specification-Title'     : "Potions Re-Glint",
+                    'Specification-Vendor'    : "Miki Tellurium",
+                    'Specification-Version'   : project.jar.archiveVersion,
+                    'Implementation-Title'    : project.name,
+                    'Implementation-Version'  : project.jar.archiveVersion,
+                    'Implementation-Vendor'   : "Miki Tellurium",
+                    'Implementation-Timestamp': new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
+                    'Timestamp'               : System.currentTimeMillis(),
+                    'Built-On-Java'           : "${System.getProperty('java.vm.version')} (${System.getProperty('java.vm.vendor')})",
+                    'Built-On-Minecraft'      : mc_version
+            ])
+        }
+    }
 
+    jar.finalizedBy('reobfJar')
 
-tasks.withType(JavaCompile).configureEach {
-    options.encoding = 'UTF-8' 
+    publishing {
+        publications {
+            mavenJava(MavenPublication) {
+                groupId project.group
+                artifactId project.archivesBaseName
+                version project.version
+                artifact jar
+            }
+        }
+        repositories {
+            maven {
+                url "file://" + System.getenv("local_maven")
+            }
+        }
+    }
 }
