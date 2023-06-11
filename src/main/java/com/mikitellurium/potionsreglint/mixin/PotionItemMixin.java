@@ -1,5 +1,6 @@
 package com.mikitellurium.potionsreglint.mixin;
 
+import com.mikitellurium.potionsreglint.config.Configuration;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.PotionItem;
@@ -17,7 +18,11 @@ public class PotionItemMixin extends Item {
     // Override the isFoil method of Item class in the PotionItem class
     @Override
     public boolean isFoil(@NotNull ItemStack stack) {
-        return super.isFoil(stack) || PotionUtils.getPotion(stack).isFoil(stack);
+        if (Configuration.ENABLE_POTION_GLINT.get()) {
+            return super.isFoil(stack) || PotionUtils.getPotion(stack).isFoil(stack);
+        } else {
+            return false;
+        }
     }
 
 }
