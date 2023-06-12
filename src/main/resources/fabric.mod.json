@@ -14,7 +14,7 @@
   },
 
   "license": "MIT License",
-  "icon": "assets/modid/potionreglintlogo.png",
+  "icon": "potionreglintlogo.png",
 
   "environment": "*",
   "entrypoints": {
