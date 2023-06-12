@@ -1,5 +1,6 @@
 package com.mikitellurium.potionsreglint.mixin;
 
+import com.mikitellurium.potionsreglint.config.Configuration;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.PotionItem;
@@ -16,7 +17,11 @@ public abstract class PotionItemMixin extends Item {
     // Override the hasGlint method of Item class in the PotionItem class
     @Override
     public boolean hasGlint(ItemStack stack) {
-        return super.hasGlint(stack) || !PotionUtil.getPotionEffects(stack).isEmpty();
+        if (Configuration.ENABLE_POTION_GLINT.getValue()) {
+            return super.hasGlint(stack) || !PotionUtil.getPotionEffects(stack).isEmpty();
+        } else {
+            return false;
+        }
     }
 
 }

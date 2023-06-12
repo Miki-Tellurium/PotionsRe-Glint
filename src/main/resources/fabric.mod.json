@@ -20,6 +20,9 @@
   "entrypoints": {
     "main": [
       "com.mikitellurium.potionsreglint.PotionsReGlint"
+    ],
+    "modmenu": [
+      "com.mikitellurium.potionsreglint.config.modmenu.ModMenuIntegration"
     ]
   },
   "mixins": [
