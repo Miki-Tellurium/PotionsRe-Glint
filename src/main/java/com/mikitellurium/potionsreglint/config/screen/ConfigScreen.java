@@ -20,7 +20,7 @@ public class ConfigScreen {
         ConfigEntryBuilder entryBuilder = builder.entryBuilder();
 
         general.addEntry(entryBuilder.startBooleanToggle(
-                Component.translatable("config.potionsreglint.enablePotionGlint"), true)
+                Component.translatable("config.potionsreglint.enablePotionGlint"), Configuration.ENABLE_POTION_GLINT.get())
                 .setDefaultValue(true)
                 .setSaveConsumer((newValue) -> Configuration.ENABLE_POTION_GLINT.set(newValue))
                 .build());
