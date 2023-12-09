@@ -23,12 +23,8 @@ public class PotionsReGlint implements ModInitializer {
 		}
 
 		ClientLifecycleEvents.CLIENT_STOPPING.register((client -> {
-			try {
-				Configuration.MOD_CONFIG.save();
-				LOGGER.info("Saved Potion Re-Glint config");
-			} catch (IOException e) {
-				throw new RuntimeException(e);
-			}
+			Configuration.MOD_CONFIG.save();
+			LOGGER.info("Saved Potion Re-Glint config");
 		}));
 	}
 
