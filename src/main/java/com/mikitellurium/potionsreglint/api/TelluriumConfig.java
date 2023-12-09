@@ -1,6 +1,8 @@
 package com.mikitellurium.potionsreglint.api;
 
 import net.fabricmc.loader.api.FabricLoader;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -37,7 +39,7 @@ import java.util.Scanner;
 /**
  * A class used to create and load simple config files.
  * @author Miki Tellurium
- * @version 1.3.0-Fabric
+ * @version 1.4.0-Fabric
  */
 @SuppressWarnings("rawtypes")
 public class TelluriumConfig {
@@ -50,6 +52,7 @@ public class TelluriumConfig {
      */
     public static class Builder {
 
+        private final Logger logger;
         private final String file; // The path of the config file
 
         private final List<String> COMMENTS = new ArrayList<>();
@@ -62,6 +65,7 @@ public class TelluriumConfig {
         public Builder(String fileName) {
             // Using the mod id suggested
             this.file = FabricLoader.getInstance().getConfigDir().resolve(fileName + fileExtension).toString();
+            this.logger = LoggerFactory.getLogger(fileName);
         }
 
         /**
@@ -72,7 +76,6 @@ public class TelluriumConfig {
         public String getConfigFilePath() {
             return file;
         }
-
 
         /**
          * Add a comment to the config file.
@@ -126,8 +129,8 @@ public class TelluriumConfig {
          * @param defaultValue the default value of the entry
          * @return the config entry that was created
          */
-        public IntRangeConfigEntry defineInRange(String key, int minValue, int maxValue, int defaultValue) {
-            IntRangeConfigEntry newEntry = new IntRangeConfigEntry(this, key, minValue, maxValue, defaultValue);
+        public RangedConfigEntry<Integer> defineInRange(String key, int minValue, int maxValue, int defaultValue) {
+            RangedConfigEntry<Integer> newEntry = new RangedConfigEntry<>(this, key, minValue, maxValue, defaultValue);
             ENTRIES.add(newEntry);
             return newEntry;
         }
@@ -146,6 +149,24 @@ public class TelluriumConfig {
         }
 
         /**
+         * Makes an entry that holds a double value.
+         * <p>
+         * This value will always stay between the specified
+         * range (inclusive).
+         *
+         * @param key the name of the entry
+         * @param minValue the minimum value this entry can have
+         * @param maxValue the maximum value this entry can have
+         * @param defaultValue the default value of the entry
+         * @return the config entry that was created
+         */
+        public RangedConfigEntry<Double> defineInRange(String key, double minValue, double maxValue, double defaultValue) {
+            RangedConfigEntry<Double> newEntry = new RangedConfigEntry<>(this, key, minValue, maxValue, defaultValue);
+            ENTRIES.add(newEntry);
+            return newEntry;
+        }
+
+        /**
          * Makes an entry that holds a long value.
          *
          * @param key the name of the entry
@@ -154,6 +175,24 @@ public class TelluriumConfig {
          */
         public ConfigEntry<Long> define(String key, long defaultValue) {
             ConfigEntry<Long> newEntry = new ConfigEntry<>(this, key, defaultValue);
+            ENTRIES.add(newEntry);
+            return newEntry;
+        }
+
+        /**
+         * Makes an entry that holds a long value.
+         * <p>
+         * This value will always stay between the specified
+         * range (inclusive).
+         *
+         * @param key the name of the entry
+         * @param minValue the minimum value this entry can have
+         * @param maxValue the maximum value this entry can have
+         * @param defaultValue the default value of the entry
+         * @return the config entry that was created
+         */
+        public RangedConfigEntry<Long> defineInRange(String key, long minValue, long maxValue, long defaultValue) {
+            RangedConfigEntry<Long> newEntry = new RangedConfigEntry<>(this, key, minValue, maxValue, defaultValue);
             ENTRIES.add(newEntry);
             return newEntry;
         }
@@ -176,9 +215,8 @@ public class TelluriumConfig {
          * <p>
          * If the file already exist also load all its entries values.
          * Call this during the initialization phase of the game.
-         * @throws IOException if the file is not found
          */
-        public void build() throws IOException {
+        public void build() {
             File file = new File(this.file);
             if (file.exists()) {
                 load();
@@ -192,9 +230,9 @@ public class TelluriumConfig {
          * This is automatically called from the {@link #build()} method
          * but can also be called individually to save values when they
          * are changed during the execution of the game.
-         * @throws IOException if it wasn't possible to write to the config file
          */
-        public void save() throws IOException{
+        public void save() {
+            try {
             FileWriter writer = new FileWriter(file);
             final String newline = System.lineSeparator(); // Wrap text
 
@@ -218,9 +256,9 @@ public class TelluriumConfig {
                         writer.write("# " + entry.getComment() + newline);
                     }
 
-                    if (entry instanceof IntRangeConfigEntry) {
-                        writer.write("# Range: min=" + ((IntRangeConfigEntry) entry).getMinValue() +
-                                ", max=" + ((IntRangeConfigEntry) entry).getMaxValue() + newline);
+                    if (entry instanceof RangedConfigEntry<?>) {
+                        writer.write("# Range: min=" + ((RangedConfigEntry) entry).getMinValue() +
+                                ", max=" + ((RangedConfigEntry) entry).getMaxValue() + newline);
                     }
 
                     writer.write("# default = " + entry.getDefaultValue() + newline);
@@ -231,16 +269,25 @@ public class TelluriumConfig {
 
             writer.flush();
             writer.close();
+            } catch (IOException e) {
+                logger.error("Something went wrong when trying to write config file \"" + this.getConfigFilePath() + "\"");
+                e.printStackTrace();
+            }
         }
 
         /*
          * Loads values from the config file
          */
-        private void load() throws IOException {
+        private void load() {
+            try {
             File file = new File(this.file);
             Scanner reader = new Scanner(file);
             for (int line = 1; reader.hasNextLine(); line++) {
                 parseConfigEntry(reader.nextLine(), line);
+            }
+            } catch (IOException e) {
+                logger.error("Something went wrong when trying to read config file \"" + this.getConfigFilePath() + "\"");
+                e.printStackTrace();
             }
         }
 
@@ -258,34 +305,27 @@ public class TelluriumConfig {
                     if (configEntry != null) {
 
                         try {
-                            if (configEntry.getValue() instanceof Boolean) {
-                                configEntry.setValue(Boolean.parseBoolean(entryParts[1]));
-                            } else if (configEntry.getValue() instanceof Integer) {
-                                configEntry.setValue(Integer.parseInt(entryParts[1]));
-                            } else if (configEntry.getValue() instanceof Double) {
-                                configEntry.setValue(Double.parseDouble(entryParts[1]));
-                            } else if (configEntry.getValue() instanceof Long) {
-                                configEntry.setValue(Long.parseLong(entryParts[1]));
-                            } else if (configEntry.getValue() instanceof String) {
-                                configEntry.setValue(String.valueOf(entryParts[1]));
+                            Class<?> valueType = configEntry.getValue().getClass();
+                            switch (valueType.getSimpleName()) {
+                                case "Boolean" -> configEntry.setValue(Boolean.parseBoolean(entryParts[1]));
+                                case "Integer" -> configEntry.setValue(Integer.parseInt(entryParts[1]));
+                                case "Double" -> configEntry.setValue(Double.parseDouble(entryParts[1]));
+                                case "Long" -> configEntry.setValue(Long.parseLong(entryParts[1]));
+                                case "String" -> configEntry.setValue(String.valueOf(entryParts[1]));
+                                default -> configEntry.setValue(configEntry.getDefaultValue());  // Handle unsupported types
                             }
-                        } catch (NumberFormatException e){
+                        } catch (NumberFormatException e) {
                             configEntry.setValue(configEntry.getDefaultValue());
-                            //throw new IllegalConfigValueException("Invalid value type in config file \"" + this.getConfigFilePath() + "\" on line " + line);
                         }
 
                     } else {
-                        throw new IllegalConfigValueException(
-                                "Syntax error in config file \"" + this.getConfigFilePath() + "\" on line " + line);
+                        logger.error("Unknown entry found: \"" + entryParts[0] + "\" in config file \"" + this.getConfigFilePath() + "\" at line " + line + ". Removing it.");
                     }
 
                 } else {
-                    throw new IllegalConfigValueException(
-                            "Syntax error in config file \"" + this.getConfigFilePath() + "\" on line " + line);
+                    logger.error("Unknown entry found: \"" + entryParts[0] + "\" in config file \"" + this.getConfigFilePath() + "\" at line " + line + ". Removing it.");
                 }
-
             }
-
         }
 
         /*
@@ -399,12 +439,12 @@ public class TelluriumConfig {
      * An object used to save a config value that has to be
      * in a certain range.
      */
-    public static class IntRangeConfigEntry extends ConfigEntry<Integer> {
+    public static class RangedConfigEntry<T extends Number> extends ConfigEntry<T> {
 
-        private final int minValue;
-        private final int maxValue;
+        private final T minValue;
+        private final T maxValue;
 
-        private IntRangeConfigEntry(Builder parent, String key, int minValue, int maxValue, int defaultValue) {
+        private RangedConfigEntry(Builder parent, String key, T minValue, T maxValue, T defaultValue) {
             super(parent, key, defaultValue);
             this.minValue = minValue;
             this.maxValue = maxValue;
@@ -413,14 +453,14 @@ public class TelluriumConfig {
         /**
          * @return the minimum value this entry can have
          */
-        public int getMinValue() {
+        public T getMinValue() {
             return minValue;
         }
 
         /**
          * @return the maximum value this entry can have
          */
-        public int getMaxValue() {
+        public T getMaxValue() {
             return maxValue;
         }
 
@@ -436,14 +476,28 @@ public class TelluriumConfig {
          * @param value the new value
          */
         @Override
-        public void setValue(Integer value) {
-            if (value < minValue) {
+        public void setValue(T value) {
+            if (compare(value, minValue) < 0) {
                 super.setValue(minValue);
-            } else if (value > maxValue){
+            } else if (compare(value, maxValue) > 0){
                 super.setValue(maxValue);
             } else {
                 super.setValue(value);
             }
+        }
+
+        /**
+         * Compares two values of type T.
+         *
+         * @param value1 the first value to compare
+         * @param value2 the second value to compare
+         * @return a negative integer if value1 is less than value2,
+         *         zero if they are equal, or a positive integer if
+         *         value1 is greater than value2
+         */
+        @SuppressWarnings("unchecked")
+        private int compare(T value1, T value2) {
+            return ((Comparable<T>) value1).compareTo(value2);
         }
 
         /**
@@ -452,33 +506,9 @@ public class TelluriumConfig {
          * @return the config entry that was commented
          */
         @Override
-        public IntRangeConfigEntry comment(String comment) {
+        public RangedConfigEntry<T> comment(String comment) {
             super.comment(comment);
             return this;
-        }
-
-    }
-
-    /**
-     * An exception used to handle illegal values specified
-     * in the config file.
-     */
-    public static class IllegalConfigValueException extends IllegalArgumentException {
-
-        public IllegalConfigValueException() {
-            super();
-        }
-
-        public IllegalConfigValueException(String s) {
-            super(s);
-        }
-
-        public IllegalConfigValueException(String message, Throwable cause) {
-            super(message, cause);
-        }
-
-        public IllegalConfigValueException(Throwable cause) {
-            super(cause);
         }
 
     }
