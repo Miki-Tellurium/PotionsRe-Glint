@@ -4,12 +4,13 @@ import com.mikitellurium.potionsreglint.config.Configuration;
 import me.shedaniel.clothconfig2.api.ConfigBuilder;
 import me.shedaniel.clothconfig2.api.ConfigCategory;
 import me.shedaniel.clothconfig2.api.ConfigEntryBuilder;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 
 public class ConfigScreen {
 
-    public static Screen openScreen(Screen parent) {
+    public static Screen openScreen(Minecraft minecraft, Screen parent) {
 
         ConfigBuilder builder = ConfigBuilder.create()
                 .setParentScreen(parent)
