@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "id": "${archives_base_name}",
-  "version": "${version}",
+  "version": "${mod_version}",
 
   "name": "Potions Re-Glint",
   "description": "Adding back enchantment glint to potions",
