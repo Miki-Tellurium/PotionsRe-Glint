@@ -6,21 +6,26 @@ import net.neoforged.fml.config.ModConfig;
 import net.neoforged.neoforge.common.ModConfigSpec;
 
 public class Configuration {
+    private static final ModConfigSpec CLIENT_CONFIG = setupConfig();
     public static ModConfigSpec.BooleanValue ENABLE_POTION_GLINT;
 
-    public static void registerConfig() {
-        ModConfigSpec.Builder CONFIG_BUILDER = new ModConfigSpec.Builder();
-        setupConfig(CONFIG_BUILDER);
-        ModLoadingContext.get().getActiveContainer().registerConfig(ModConfig.Type.CLIENT, CONFIG_BUILDER.build());
+    public static void register() {
+        ModLoadingContext.get().getActiveContainer().registerConfig(ModConfig.Type.CLIENT, CLIENT_CONFIG);
     }
 
-    public static void setupConfig(ModConfigSpec.Builder CONFIG_BUILDER) {
-        CONFIG_BUILDER.comment("Potion Re-Glint Configuration").push(PotionsReGlintMod.MOD_ID);
+    private static ModConfigSpec setupConfig() {
+        ModConfigSpec.Builder builder = new ModConfigSpec.Builder();
+        builder.push(PotionsReGlintMod.MOD_ID).comment("Turtle Charging Station Configuration");
 
-        ENABLE_POTION_GLINT = CONFIG_BUILDER
+        ENABLE_POTION_GLINT = builder
                 .comment("Enable enchantment glint on potions")
                 .define("enablePotionEnchantmentGlint", true);
 
-        CONFIG_BUILDER.pop();
+        builder.pop();
+        return builder.build();
+    }
+
+    public static ModConfigSpec getClient() {
+        return CLIENT_CONFIG;
     }
 }

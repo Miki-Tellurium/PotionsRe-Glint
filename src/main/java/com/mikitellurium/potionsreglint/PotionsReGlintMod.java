@@ -15,7 +15,7 @@ public class PotionsReGlintMod {
     private static final Logger LOGGER = LogUtils.getLogger();
 
     public PotionsReGlintMod() {
-        Configuration.registerConfig();
+        Configuration.register();
         init();
     }
 
