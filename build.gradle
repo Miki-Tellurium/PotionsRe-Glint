@@ -39,7 +39,7 @@ runs {
 
     server {
         systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
-        argument '--nogui'
+        //argument '--nogui'
     }
 
     gameTestServer {
