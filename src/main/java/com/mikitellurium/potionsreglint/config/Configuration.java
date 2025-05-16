@@ -6,8 +6,7 @@ import com.mikitellurium.potionsreglint.api.TelluriumConfig;
 import java.io.IOException;
 
 public class Configuration {
-
-    public static final TelluriumConfig.Builder MOD_CONFIG = new TelluriumConfig.Builder(PotionsReGlint.MOD_ID);
+    public static final TelluriumConfig.Builder MOD_CONFIG = new TelluriumConfig.Builder(PotionsReGlint.MOD_ID + "_client");
     public static TelluriumConfig.ConfigEntry<Boolean> ENABLE_POTION_GLINT;
 
     public static void registerConfig() throws IOException {
@@ -19,5 +18,4 @@ public class Configuration {
 
         MOD_CONFIG.build();
     }
-
 }
