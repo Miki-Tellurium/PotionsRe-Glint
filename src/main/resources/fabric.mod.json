@@ -29,7 +29,7 @@
     ]
   },
   "mixins": [
-    "potions_re_glint.mixins.json"
+    "potionsreglint.mixins.json"
   ],
 
   "depends": {
