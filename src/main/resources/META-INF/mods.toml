@@ -10,10 +10,11 @@ version="${mod_version}" #mandatory
 displayName="${mod_name}" #mandatory
 #updateJSONURL="https://change.me.example.invalid/updates.json" #optional
 displayURL="https://modrinth.com/mod/potions-re-glint" #optional
-logoFile="examplemod.png" #optional
+logoFile="potionreglintlogo.png" #optional
 #credits="" #optional
 authors="${mod_authors}" #optional
 description='''${mod_description}'''
+side="CLIENT"
 
 [[mixins]]
 config="${mod_id}.mixins.json"
