@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "id": "potions_re_glint",
+  "id": "${archives_base_name}",
   "version": "${version}",
 
   "name": "Potions Re-Glint",
@@ -20,6 +20,9 @@
   "entrypoints": {
     "main": [
       "com.mikitellurium.potionsreglint.PotionsReGlint"
+    ],
+    "client": [
+      "com.mikitellurium.potionsreglint.PotionsReGlintClient"
     ],
     "modmenu": [
       "com.mikitellurium.potionsreglint.config.modmenu.ModMenuIntegration"
