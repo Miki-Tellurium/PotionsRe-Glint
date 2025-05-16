@@ -69,9 +69,11 @@ dependencies {
     implementation "me.shedaniel.cloth:cloth-config-neoforge:${cloth_config_version}"
 }
 
-tasks.withType(ProcessResources).configureEach {
+jar {
     version = "${project.version}-${minecraft_version}-neoforge"
+}
 
+tasks.withType(ProcessResources).configureEach {
     var replaceProperties = [
             minecraft_version      : minecraft_version,
             minecraft_version_range: minecraft_version_range,
