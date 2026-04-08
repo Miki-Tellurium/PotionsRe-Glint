@@ -1,0 +1,14 @@
+{
+	"required": true,
+	"package": "com.mikitellurium.potionsreglint.mixin",
+	"compatibilityLevel": "JAVA_25",
+	"mixins": [
+		"PotionItemMixin"
+	],
+	"injectors": {
+		"defaultRequire": 1
+	},
+	"overwrites": {
+		"requireAnnotations": true
+	}
+}
